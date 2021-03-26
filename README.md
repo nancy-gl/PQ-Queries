@@ -1,2 +1,1 @@
-# PQ-Queries
-Power Query functions.
+Power Query queries and functions.
