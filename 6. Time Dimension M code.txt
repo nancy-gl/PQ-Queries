@@ -1,0 +1,26 @@
+Let 
+	StartTime = #datetime(1900,1,1,0,0,0), 
+	Increment = #duration(0,0,1,0),
+	Times = List.DateTimes(StartTime, 24*60, Increment), 
+	TimesAsTable = Table.FromList(Times,Splitter.SplitByNothing()), 
+	RenameTime = Table.RenameColumns(TimesAsTable,{{"Column1", "Time"}}), 
+	ChangedDataType = Table.TransformColumnTypes(RenameTime,{{"Time", type time}}), 
+	AddHour = Table.AddColumn( 
+			ChangedDataType, 
+			"Hour",
+			each Text.PadStart(Text.From(Time.Hour([Time])), 2, "0" ) ),
+	AddMinute = Table.AddColumn( 
+			AddHour,
+			"Minute",
+			each Text.PadStart(Text.From(Time.Minute([Time])), 2, "0" ) ),
+	AddHourMinute = Table.AddColumn( 
+			AddMinute,
+			"HourMinute", 
+			each [Hour] & ":" & [Minute] ),
+	AddIndex = Table.AddColumn( 
+			AddHourMinute, 
+			"TimeIndex",
+			each Time.Hour([Time]) * 60 + Time.Minute([Time]) ), 
+	Result = AddIndex 
+in
+	Result
